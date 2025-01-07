@@ -1,0 +1,6 @@
+build:
+  python_version: "3.8"
+  system_packages:
+    - espeak
+    - libsndfile1
+predict: "predict.py:Predictor"
