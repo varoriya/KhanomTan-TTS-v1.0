@@ -1,0 +1,27 @@
+name: Deploy to Replicate
+
+on:
+  push:
+    branches:
+      - main  # ทำงานเมื่อ Push ไปยัง branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ดึงโค้ดจาก Repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # ติดตั้ง Python และ Cog
+      - name: Setup Python and Install Cog
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install cog
+
+      # Deploy โมเดลไปยัง Replicate
+      - name: Push to Replicate
+        env:
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+        run: cog push
