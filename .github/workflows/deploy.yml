@@ -1,10 +1,10 @@
-name: Push to Replicate
+        name: Push to Replicate
 
 on:
   workflow_dispatch:
     inputs:
       model_name:
-        description: 'Enter the model name, like "your-username/your-model"'
+        description: 'Enter the model name, like "varoriya/xtts-v2-thai"'
         required: true
 
 jobs:
@@ -26,6 +26,14 @@ jobs:
         with:
           token: ${{ secrets.REPLICATE_API_TOKEN }}
 
+      - name: Download model from Hugging Face
+        run: |
+          mkdir -p models/khanomtan-tts-v1.0
+          wget -O models/khanomtan-tts-v1.0/config.json https://huggingface.co/wannaphong/khanomtan-tts-v1.0/resolve/main/config.json
+          wget -O models/khanomtan-tts-v1.0/pytorch_model.bin https://huggingface.co/wannaphong/khanomtan-tts-v1.0/resolve/main/pytorch_model.bin
+          wget -O models/khanomtan-tts-v1.0/preprocessor_config.json https://huggingface.co/wannaphong/khanomtan-tts-v1.0/resolve/main/preprocessor_config.json
+
       - name: Push to Replicate
         run: cog push r8.im/varoriya/xtts-v2-thai
+
 
