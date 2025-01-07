@@ -1,31 +1,30 @@
-name: Deploy to Replicate
+name: Push to Replicate
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      model_name:
+        description: 'Enter the model name, like "your-username/your-model"'
+        required: true
 
 jobs:
-  deploy:
+  push_to_replicate:
+    name: Push to Replicate
     runs-on: ubuntu-latest
-
     steps:
-      # ดึงโค้ดจาก Repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          docker-images: false
 
-      # ติดตั้ง Python และ Cog
-      - name: Setup Python and Install Cog
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install cog
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # ตรวจสอบว่า Cog ถูกติดตั้งสำเร็จ
-      - name: Verify Cog installation
-        run: cog --version
+      - name: Setup Cog
+        uses: replicate/setup-cog@v2
+        with:
+          token: ${{ secrets.REPLICATE_API_TOKEN }}
 
-      # Deploy โมเดลไปยัง Replicate
       - name: Push to Replicate
-        env:
-          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
-        run: cog push
+        run: cog push r8.im/${{ inputs.model_name }}
